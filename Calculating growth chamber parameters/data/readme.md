@@ -1,17 +1,19 @@
 #### This data was obtained from https://climate.weather.gc.ca/historical_data
 #### I will be using it to calculate a 5 year average daily growing season temperatures for Qikiqtaruk Herschel Island, which will be used to program the growth chambers to simulate ambient conditions. 
 
-### Station Name		HERSCHEL ISLAND
-### Province or Territory		YUKON
-### Current Station Operator	Environment and Climate Change Canada - Meteorological Service of Canada
-### Latitude		69.57
-### Longitude		-138.91
-### Elevation		1.20
-### Climate Identifier	2100636
-### WMO Identifier		71501
-### TC Identifier		WJN
+## Site Information
+#### Station Name:		HERSCHEL ISLAND
+#### Province or Territory:		YUKON
+#### Current Station Operator:	Environment and Climate Change Canada - Meteorological Service of Canada
+#### Latitude:		69.57
+#### Longitude:		-138.91
+#### Elevation:	1.20
+#### Climate Identifier:	2100636
+#### WMO Identifier:		71501
+#### TC Identifier:		WJN
 
-### Legend
+
+## Legend
 #### A	Accumulated
 #### C	Precipitation occurred, amount uncertain
 #### E	Estimated
