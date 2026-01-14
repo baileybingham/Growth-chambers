@@ -9,38 +9,20 @@
 library(tidyverse) #includes ggplot, tdyr, dplyr, etc. 
 
 ####Import and join climate data####
-clim10 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2010_climate_daily_YT_QHI.csv")
-clim11 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2011_climate_daily_YT_QHI.csv")
-clim12 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2012_climate_daily_YT_QHI.csv")
-clim13 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2013_climate_daily_YT_QHI.csv")
-clim14 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2014_climate_daily_YT_QHI.csv")
-clim15 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2015_climate_daily_YT_QHI.csv")
-clim16 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2016_climate_daily_YT_QHI.csv")
-clim17 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2017_climate_daily_YT_QHI.csv")
-clim18 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2018_climate_daily_YT_QHI.csv")
-clim19 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2019_climate_daily_YT_QHI.csv")
-clim20 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2020_climate_daily_YT_QHI.csv")
-clim21 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2021_climate_daily_YT_QHI.csv")
-clim22 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2022_climate_daily_YT_QHI.csv")
-clim23 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2023_climate_daily_YT_QHI.csv")
-clim24 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2024_climate_daily_YT_QHI.csv")
-clim25 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2025_climate_daily_YT_QHI.csv")
+data_path <- "Calculating growth chamber parameters/data/ECCC temp data/"
+desired_cols <- c(
+  "Station.Name", "Date.Time", "Year", "Month", "Day",
+  "Max.Temp...C.", "Min.Temp...C.", "Mean.Temp...C.") #define columns I want to keep
+# Load all files, select desired columns, and combine into one data frame
+climALL <- list.files(data_path, pattern = "*.csv", full.names = TRUE) %>%
+  map_df(~read.csv(.x) %>% 
+           select(all_of(desired_cols)), 
+         .id = "source_file")
 
-joined <- bind_rows(clim10, clim11, clim12, clim13, clim14, clim15, clim16, clim17,
-                    clim18, clim19, clim20, clim21, clim22, clim23, clim24, clim25) ##bind all data together
-
-## getting an error that Spd of max gust includes characters and integers, so we have to remove that.
-# Put all data frames in a vector of names
-df_names <- paste0("clim", 10:25)
-
-# Use lapply to remove the unwanted column, then bind_rows
-joined <- bind_rows(
-  lapply(df_names, function(x) {
-    df <- get(x)                     # get the data frame by name
-    df %>% select(-Spd.of.Max.Gust..km.h.)  # drop the column
-  })
-)
-climALL<- joined %>% select(Station.Name, Date.Time, Year, Month, Day, Max.Temp...C.,Min.Temp...C.,Mean.Temp...C.)
+###above is a simpler way of loading all 30 files, but they could also have been loaded as below:
+#clim10 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2010_climate_daily_YT_QHI.csv")
+#clim11 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2011_climate_daily_YT_QHI.csv")
+#clim12 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2012_climate_daily_YT_QHI.csv")
 
 #remove all months but June-September
 climALL <- climALL %>% filter (between (Month, 6,9))
