@@ -3,15 +3,15 @@
 ## Reviewing TOMST temp curves
 ## Bailey E. Bingham
 ## bbingh02@student.ubc.ca
-## 2025-01-13
+## 2025-01-14
 ##############################################
 
 #install.packages("tidyverse")
 library(tidyverse) #includes ggplot, tdyr, dplyr, etc. 
 
 ####Import and join tomst data####
-tomst24<- read.csv("G:/Other computers/Bailey's Yoga/1. PhD Research/Data/Growth Chamber/TOMST Data 2025/Clean/QHI_location_temperature_daily.csv")
-tomst25<- read.csv("G:/Other computers/Bailey's Yoga/1. PhD Research/Data/Growth Chamber/TOMST Data 2025/Clean/QHI_location_temperature_daily_2025.csv")
+tomst24<- read.csv(("Calculating growth chamber parameters/data/TOMST data/QHI_location_temperature_daily.csv"))
+tomst25<- read.csv(("Calculating growth chamber parameters/data/TOMST data/QHI_location_temperature_daily_2025.csv"))
 tomst <- bind_rows(tomst24,tomst25)
 
 tomst <- tomst %>% filter (between (month, 6,9))
@@ -31,3 +31,4 @@ ggplot(tomst, aes(x = datetime, y = value)) +
     x = "Month and Day",
     y = "Mean Temperature (°C)"
   )
+
