@@ -33,8 +33,9 @@ climALL$Date.Time <- as.Date(climALL$Date.Time)
 ggplot(climALL, aes(x = Date.Time, y = Mean.Temp...C.)) +
   geom_point()+
   geom_smooth(se = TRUE) +
-  geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "solid") +
+  geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
   facet_wrap(~Year, scales = "free_x")+
+  theme_minimal() +
   scale_y_continuous(breaks = seq(-50, 50, by = 5)) + 
   scale_x_date(date_labels = "%b %d", date_breaks = "1 months") + 
   labs(
@@ -43,5 +44,24 @@ ggplot(climALL, aes(x = Date.Time, y = Mean.Temp...C.)) +
     y = "Mean Temperature (°C)"
   )
 
+####Create a 30 year average plot####
+library(lubridate)
+climALL_rev <-climALL %>%
+  # Create dummy column: force all years to 2026
+  mutate(datetime_rev = update(as.Date(Date.Time), year = 2026)) 
 
-
+ggplot(climALL_rev, aes(x = datetime_rev, y = Mean.Temp...C.)) +
+  geom_point(alpha = 0.1, color = "black", size = 1)+
+  #geom_smooth(aes(group = Year, color = Year),  se = FALSE, linewidth = 0.7) + #show individual years
+  geom_smooth(color = "blue", linewidth = 1.5, se = FALSE) + #show trendline
+  geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
+  scale_y_continuous(breaks = seq(-50, 50, by = 5)) + 
+  scale_color_viridis_c() + 
+  theme_minimal() +
+  scale_x_date(date_labels = "%b %d", date_breaks = "1 week") + 
+  labs(
+    title = "Daily Mean Temperature (1996-2025)",
+    subtitle = "Blue line represents the 30-year average trend",
+    x = "Month and Day",
+    y = "Mean Temperature (°C)"
+  )
