@@ -14,7 +14,7 @@ fpath<- list.files("Calculating growth chamber parameters/data/QHI temperature d
 
 ###Identify which part of the file name should be the locality_ID###
 # This regex looks for: QHI (Group 1), TOMST (Group 2), and 39 (Group 3)
-# based on your specific format: ..._QHI_TOMST_39.csv
+# based on my file name format: ..._QHI_TOMST_39.csv
 extracted_ids <- str_replace(
   basename(fpath), 
   ".*_([A-Z]+)_(TOMST)_(\\d+)\\.csv", 
