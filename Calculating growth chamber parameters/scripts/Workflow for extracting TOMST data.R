@@ -7,9 +7,11 @@
 
 #install.packages("myClim")
 library (myClim)
+library (tidyverse)
+library (lubridate)
 
 ####Import new TOMST data####
-fpath<- list.files("Calculating growth chamber parameters/data/QHI temperature data/TOMST data/2025_raw", full.names = TRUE, pattern = "\\.csv$")
+fpath<- list.files("Calculating growth chamber parameters/data/QHI temperature data/TOMST data/2025/2025_raw", full.names = TRUE, pattern = "\\.csv$")
 
 
 ###Identify which part of the file name should be the locality_ID###
@@ -29,19 +31,38 @@ my_files_table <- data.frame(
 )
 
 # 4. Import the data using the custom locality names
-tomst25 <- mc_read_data(files_table = my_files_table)
+tomst <- mc_read_data(files_table = my_files_table)
 
 #tomst25 <- mc_read_files(data_path, dataformat_name = "TOMST")
 
 #clean and aggregate using myClim
-tomst25 <- mc_prep_clean(tomst25)
-tomst25_daily <- mc_agg(tomst25, fun = c("mean", "max", "min"), period = "day")
+tomst <- mc_prep_clean(tomst)
+tomst_daily <- mc_agg(tomst, fun = c("mean", "max", "min"), period = "day")
 
 # Convert to long format
-tomst25_daily <- mc_reshape_long(tomst25_daily)
-head(tomst25_daily)
+tomst_daily <- mc_reshape_long(tomst_daily)
+head(tomst_daily)
 
-## something is wrong with the file names, such that 
-## the locality_ID is not downloading correctly. Ask 
-## Hana what she did. Also, I am not sure how these files 
-## somehow have the full data since 2021 rather than just the 2025 data???
+#### Doing some checks ####
+# Does every TOMST sensor have all the year data?
+check_years <- tomst_daily %>%
+  #Extract the year and create a temporary 'presence' column
+  mutate(year = year(as.Date(datetime)), 
+         present = 1) %>%
+  #Keep only unique locality/year combinations
+  distinct(locality_id, year, present) %>%
+  # 3. Pivot the years into columns
+  pivot_wider(
+    names_from = year, 
+    values_from = present, 
+    values_fill = 0
+  )
+
+unique(tomst_daily$locality_id) 
+
+###Only 33 labelled TOMST (missing 02,08,11,14,27,29,34), plus 3 unknown datasets with only 2025 data...
+###How many TOMST are there actually?? 
+
+#### write as csv ####
+write_csv(tomst_daily, "agg_daily_tomst_data_2025.csv")
+getwd()
