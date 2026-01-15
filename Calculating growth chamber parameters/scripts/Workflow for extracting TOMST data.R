@@ -44,4 +44,4 @@ head(tomst25_daily)
 ## something is wrong with the file names, such that 
 ## the locality_ID is not downloading correctly. Ask 
 ## Hana what she did. Also, I am not sure how these files 
-## somehow have the full data since 2021???
+## somehow have the full data since 2021 rather than just the 2025 data???
