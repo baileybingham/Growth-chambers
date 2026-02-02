@@ -9,7 +9,7 @@
 library(tidyverse) #includes ggplot, tdyr, dplyr, etc. 
 
 ####Import and join climate data####
-data_path <- "Calculating growth chamber parameters/data/ECCC temp data/"
+data_path <- "Calculating growth chamber parameters/data/QHI temperature data/ECCC temp data/"
 desired_cols <- c(
   "Station.Name", "Date.Time", "Year", "Month", "Day",
   "Max.Temp...C.", "Min.Temp...C.", "Mean.Temp...C.") #define columns I want to keep
@@ -25,7 +25,7 @@ climALL <- list.files(data_path, pattern = "*.csv", full.names = TRUE) %>%
 #clim12 <- read.csv("Calculating growth chamber parameters/data/ECCC temp data/2012_climate_daily_YT_QHI.csv")
 
 #remove all months but June-September
-climALL <- climALL %>% filter (between (Month, 6,9))
+#climALL <- climALL %>% filter (between (Month, 6,9))
 
 # create graph
 climALL$Date.Time <- as.Date(climALL$Date.Time)
@@ -65,3 +65,38 @@ ggplot(climALL_rev, aes(x = datetime_rev, y = Mean.Temp...C.)) +
     x = "Month and Day",
     y = "Mean Temperature (°C)"
   )
+
+
+#### Create a dataframe with the 30 year average
+QHI_30avg <- climALL_rev %>%
+  group_by(Month, Day) %>%
+  summarise(
+    Mean_Temp = mean(`Mean.Temp...C.`, na.rm = TRUE),
+    Max_Temp = max(`Max.Temp...C.`, na.rm = TRUE),
+    Min_Temp = min(`Min.Temp...C.`, na.rm = TRUE),
+    n_years    = sum(!is.na(Mean.Temp...C.)),
+    .groups = "drop")%>%
+    ungroup()
+
+# Add a 'dummy' date for easier graphing (uses a non-leap year by default)
+QHI_30avg$dummydate <- as.Date(paste(2023, QHI_30avg$Month, QHI_30avg$Day, sep = "-"))
+
+## graph 30 year average
+ggplot(QHI_30avg, aes(x = dummydate, y = Mean_Temp)) +
+  geom_line(color = "grey", size = 1)+
+  geom_ribbon(aes(ymin = Min_Temp, ymax = Max_Temp), alpha = 0.2, fill = "grey") +
+  geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
+  scale_y_continuous(breaks = seq(-50, 50, by = 5)) + 
+  scale_color_viridis_c() + 
+  theme_minimal() +
+  scale_x_date(date_labels = "%b %d", date_breaks = "1 month") + 
+  labs(
+    title = "QHI- ECCC Daily Mean Temperature (1996-2025)",
+    subtitle = "Ribbon represents temperature extremes. Data collected by ECCC. Note that there is a lot of missing data.",
+    x = "Month and Day",
+    y = "Mean Temperature (°C)"
+  )
+
+#dir.create("export_data")
+write.csv(QHI_30avg,"export_data/ECCC_dailymeantemp_1996-2025.csv" , row.names = FALSE)
+
