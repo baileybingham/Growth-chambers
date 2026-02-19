@@ -1,1 +1,1 @@
-### This folder contains my data and rscripts used to calculate the temperature curves used in the growth chamber. 
+### This folder contains data from ECCC and from QHI-Tomst, which show the historical temperatures at my field site on Qikiqtaruk - Herschel Island in the Yukon. 
