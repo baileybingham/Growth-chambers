@@ -8,7 +8,7 @@ library(lubridate)
 library(zoo)
 
 ### IMPORT AGGREGATED DAILY TOMST DATA ###
-eccc<-read.csv("~/1. PhD Research/GitHub/Growth-chambers/export_data/ECCC_dailymeantemp_1996-2025.csv") %>%
+eccc<-read.csv("1. Exploring QHI temp data/data/ECCC temp data/combined_ECCC_dailymeantemp_1996-2025.csv") %>%
   drop_na()%>%
   # Read datetime as a date
   mutate(dummydate = ymd(dummydate)) %>% 
@@ -20,7 +20,7 @@ eccc<-read.csv("~/1. PhD Research/GitHub/Growth-chambers/export_data/ECCC_dailym
     eccc_min_temp = Min_Temp
   )
 
-tomst<-read.csv("~/1. PhD Research/GitHub/TOMST-QHI/export_data/2025_TOMSTdata_preprocessed_daily.csv") %>%
+tomst<-read.csv("1. Exploring QHI temp data/data/TOMST data/2025_TOMSTdata_preprocessed_daily.csv") %>%
   # Read datetime as a date
   mutate(datetime = ymd(datetime))%>%
   #seperate QHI as the location, and the TOMST ID out into seperate columns
