@@ -242,11 +242,11 @@ protocol <- tribble(
   mutate(step_period = ymd(step_period))
 
 ggplot(forplot, aes(x = dummydate, fill = Source, color = Source)) +
-  geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.2, color = NA) +
+  #geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.2, color = NA) +
   geom_line(aes(y = mean), linewidth = 1) +
   geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
   
-  # Add the Manual Protocol as a Black Step Line
+  # Add the manual protocol as black line
   geom_step(data = protocol, 
             aes(x = step_period, y = recommended_temp), 
             color = "black", 
@@ -264,8 +264,7 @@ ggplot(forplot, aes(x = dummydate, fill = Source, color = Source)) +
        subtitle = "Black line shows an updated mean temp regime for the growth chambers, to better match field temp averages.",
        x = "Month",
        y = "Temperature (°C)") +
-  # Adjust y-axis to see the -20 steps
   coord_cartesian(xlim = c(as.Date("2023-05-01"), as.Date("2023-10-30")),
-                  ylim = c(-25, 25)) + 
+                  ylim = c(-25, 20)) + 
   theme_minimal()
 
