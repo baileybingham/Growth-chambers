@@ -130,7 +130,7 @@ and all the ECCC data available from QHI over the last 30 years.",
 
 
 ####################################################################
-### Using ECCC 30yr AVG to recommend growth chamber settings ######
+### Using ECCC 30yr AVG to recommend growth chamber control settings ######
 ###################################################################
 eccc <- eccc %>% mutate(dummydate = ymd(dummydate))
 eccc_rec <- eccc %>%
