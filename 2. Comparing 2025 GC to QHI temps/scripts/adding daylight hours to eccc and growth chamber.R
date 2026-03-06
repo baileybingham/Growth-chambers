@@ -97,6 +97,8 @@ ggplot(forplot, aes(x = dummydate, fill = Group, color = Group)) +
   geom_line(aes(y = mean), linewidth = 1) +
     # Reference line at 0°C
   geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
+  # Reference line at August 17th
+  geom_vline(xintercept = as.Date("2023-08-17"), color = "gold", linewidth = 1, linetype = "dotted") +
     # Date formatting
   scale_x_date(date_labels = "%b", date_breaks = "1 month") +
     # Custom Colors (optional but recommended for clarity)
@@ -104,9 +106,10 @@ ggplot(forplot, aes(x = dummydate, fill = Group, color = Group)) +
                                 "extended" = "orange", "ECCC-QHI 30yr avg" = "black")) +
   scale_fill_manual(values = c("control" = "blue", "heatwave" = "red", 
                                "extended" = "orange", "ECCC-QHI 30yr avg" = "black")) +
-    labs(title = "Comparison of growth chamber settings vs. 30 year average temp on QHI",
-       subtitle = "Ribbons show min/max range; lines show mean temperature.",
-       x = "Month",
+    labs(title = "Comparison of growth chamber settings vs. 30 year average temp on Qikiqtaruk",
+       subtitle = "Ribbons show min/max range. Lines show mean temperature.
+Note that daylight hours began to decrease from 24hrs of daylight on August 17th, in line with light conditions in the field.",
+       x = "Month/ Simulated date",
        y = "Temperature (°C)")+
        #fill = "Growth Chamber Setting",
       # color = "Growth Chamber Setting") 
