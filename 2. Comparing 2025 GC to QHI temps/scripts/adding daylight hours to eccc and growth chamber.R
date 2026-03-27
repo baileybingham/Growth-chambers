@@ -106,9 +106,10 @@ ggplot(forplot, aes(x = dummydate, fill = Group, color = Group)) +
                                 "extended" = "orange", "ECCC-QHI 30yr avg" = "black")) +
   scale_fill_manual(values = c("control" = "blue", "heatwave" = "red", 
                                "extended" = "orange", "ECCC-QHI 30yr avg" = "black")) +
-    labs(title = "Comparison of growth chamber settings vs. 30 year average temp on Qikiqtaruk",
-       subtitle = "Ribbons show min/max range. Lines show mean temperature.
-Note that daylight hours began to decrease from 24hrs of daylight on August 17th, in line with light conditions in the field.",
+   labs(
+   # title = "Comparison of growth chamber settings vs. 30 year average temp on Qikiqtaruk",
+   #    subtitle = "Ribbons show min/max range. Lines show mean temperature.
+#Note that daylight hours began to decrease from 24hrs of daylight on August 17th, in line with light conditions in the field.",
        x = "Month/ Simulated date",
        y = "Temperature (°C)")+
        #fill = "Growth Chamber Setting",
@@ -193,7 +194,7 @@ ggplot(light_plot_data, aes(x = dummydate, y = decimal_hrs)) +
 
 #Combine QHI light and temp data together
 qhi_combined <- eccc %>%
-  left_join(QHI_light_avg, by = "dummydate")
+  left_join(QHI_light, by = "dummydate")
 
 #plot field light and temp data on the same graph
 ggplot(qhi_combined, aes(x = dummydate)) +
@@ -314,7 +315,7 @@ ggplot(gc25_light_temp, aes(x = dummydate)) +
   coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-25")), 
                   ylim = c(-2, 30)) +
   theme_minimal() +
-  labs(title = "Chamber Settings: temperature and light",
+  labs(title = "Temperature and light growth chamber settings",
        subtitle = " Dark blue is darkness and yellow is light",
        x = "Month")
 
@@ -337,9 +338,9 @@ combined_plot_data <- forplot %>%
 # Create dual axis plot with temperature on one side and light on the other
 ggplot(combined_plot_data, aes(x = dummydate)) +
   # Field light conditions
-  geom_ribbon(data = filter(plot_df, gc_id == "extended"),
-              aes(ymin = QHI_hrs * 1.25, ymax = 30, fill = "night"), 
-              alpha = 0.4) +
+  #geom_ribbon(data = filter(light_plot_data, gc_id == "extended"),
+  #            aes(ymin = QHI_hrs * 1.25, ymax = 30, fill = "night"), 
+  #            alpha = 0.4) +
   # Temp ribbons and lines
   geom_ribbon(aes(ymin = min, ymax = max, fill = Group), alpha = 0.2) +
   geom_line(aes(y = mean, color = Group), linewidth = 1) +
