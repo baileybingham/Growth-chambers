@@ -105,7 +105,7 @@ gc25_freezer <- gc25 %>%
 ###### Bind all datasets so they can be graphed together #####
 
 forplot <- bind_rows(
-  gc25_freezer %>% select(dummydate, mean = set_mean, min = set_min, max = set_max) %>% mutate(Source = "Growth Chamber Settings"),
+  #gc25_freezer %>% select(dummydate, mean = set_mean, min = set_min, max = set_max) %>% mutate(Source = "Growth Chamber Settings"),
   tomst_4y_avg %>% select(dummydate, mean = QHI_4y_mean, min = QHI_4y_min, max = QHI_4y_max) %>% mutate(Source = "TOMST 4yr avg"),
   eccc %>% select(dummydate, mean = eccc_mean_temp, min = eccc_min_temp, max = eccc_max_temp) %>% mutate(Source = "ECCC-QHI 30yr avg")
 )
@@ -124,8 +124,8 @@ and all the ECCC data available from QHI over the last 30 years.",
        y = "Temperature (°C)",
        fill = "Dataset",
        color = "Dataset") +
-  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-25"))) +
-  scale_x_date(date_labels = "%b", date_breaks = "1 month") +
+  coord_cartesian(xlim = c(as.Date("2023-05-20"), as.Date("2023-10-15"))) +
+  scale_x_date(date_labels = "%b %d", date_breaks = "1 week") +
   theme_minimal()
 
 

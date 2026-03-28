@@ -108,12 +108,19 @@ ggplot(forplot, aes(x = dummydate, fill = Group, color = Group)) +
                   ylim = c(-30, 30)) +
   theme_minimal(base_size = 16) +
   #theme(legend.position = "none")+
-  labs(
-    #title = "Comparison of growth chamber settings vs. 30 year average temp on QHI",
-    #subtitle = "Ribbons show min/max range; lines show mean temperature.",
-    x = "Month",
-    y = "Temperature (°C)",
-    color = "Data")
+ labs(
+   # title = "Comparison of growth chamber settings vs. 30 year average temp on Qikiqtaruk",
+   #    subtitle = "Ribbons show min/max range. Lines show mean temperature.
+#Note that daylight hours began to decrease from 24hrs of daylight on August 17th, in line with light conditions in the field.",
+       x = "Month/ Simulated date",
+       y = "Temperature (°C)")+
+       #fill = "Growth Chamber Setting",
+      # color = "Growth Chamber Setting") 
+    # Focus on the active period (zoom without removing data)
+  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-25")),
+                  ylim = c(-30, 30)) + 
+  theme_minimal()
+
 
 
 ###############################################################################
@@ -191,7 +198,7 @@ ggplot(light_plot_data, aes(x = dummydate, y = decimal_hrs)) +
 
 #Combine QHI light and temp data together
 qhi_combined <- eccc %>%
-  left_join(QHI_light_avg, by = "dummydate")
+  left_join(QHI_light, by = "dummydate")
 
 #plot field light and temp data on the same graph
 ggplot(qhi_combined, aes(x = dummydate)) +
@@ -240,11 +247,11 @@ ggplot(qhi_combined, aes(x = dummydate)) +
     limits = c(-40, 30),
     sec.axis = sec_axis(~ (. + 30) / 2.5, name = "Daylight Hours", breaks = seq(0, 24, 4))
   ) +
-  scale_x_date(date_labels = "%b", date_breaks = "1 month") +
+  scale_x_date(date_labels = "%b%d", date_breaks = "1 week") +
   scale_color_manual(values = c("30yr Avg Temp" = "black", "Daylight Hours" = "gold")) +
-  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-01")), 
-                  ylim = c(-30, 30)) +
-  theme_minimal(base_size = 16) +
+  coord_cartesian(xlim = c(as.Date("2023-05-20"), as.Date("2023-10-01")), 
+                  ylim = c(-20, 30)) +
+  theme_minimal(base_size = 11) +
   theme(legend.position = "none")+
   labs(
       # title = "Qikiqtaruk 30yr average temperature and photoperiod",
@@ -321,7 +328,7 @@ ggplot(gc25_light_temp, aes(x = dummydate)) +
   coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-25")), 
                   ylim = c(-2, 30)) +
   theme_minimal() +
-  labs(title = "Chamber Settings: temperature and light",
+  labs(title = "Temperature and light growth chamber settings",
        subtitle = " Dark blue is darkness and yellow is light",
        x = "Month")
 
@@ -343,6 +350,10 @@ combined_plot_data <- forplot %>%
 
 # Create dual axis plot with temperature on one side and light on the other
 ggplot(combined_plot_data, aes(x = dummydate)) +
+  # Field light conditions
+  #geom_ribbon(data = filter(light_plot_data, gc_id == "extended"),
+  #            aes(ymin = QHI_hrs * 1.25, ymax = 30, fill = "night"), 
+  #            alpha = 0.4) +
   # Temp ribbons and lines
   geom_ribbon(aes(ymin = min, ymax = max, fill = Group), alpha = 0.2) +
   geom_line(aes(y = mean, color = Group), linewidth = 1) +
