@@ -97,8 +97,6 @@ ggplot(forplot, aes(x = dummydate, fill = Group, color = Group)) +
   geom_line(aes(y = mean), linewidth = 1) +
     # Reference line at 0°C
   geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
-  # Reference line at August 17th
-  geom_vline(xintercept = as.Date("2023-08-17"), color = "gold", linewidth = 1, linetype = "dotted") +
     # Date formatting
   scale_x_date(date_labels = "%b", date_breaks = "1 month") +
     # Custom Colors (optional but recommended for clarity)
@@ -106,17 +104,16 @@ ggplot(forplot, aes(x = dummydate, fill = Group, color = Group)) +
                                 "extended" = "orange", "ECCC-QHI 30yr avg" = "black")) +
   scale_fill_manual(values = c("control" = "blue", "heatwave" = "red", 
                                "extended" = "orange", "ECCC-QHI 30yr avg" = "black")) +
-    labs(title = "Comparison of growth chamber settings vs. 30 year average temp on Qikiqtaruk",
-       subtitle = "Ribbons show min/max range. Lines show mean temperature.
-Note that daylight hours began to decrease from 24hrs of daylight on August 17th, in line with light conditions in the field.",
-       x = "Month/ Simulated date",
-       y = "Temperature (°C)")+
-       #fill = "Growth Chamber Setting",
-      # color = "Growth Chamber Setting") 
-    # Focus on the active period (zoom without removing data)
-  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-25")),
-                  ylim = c(-30, 30)) + 
-  theme_minimal()
+  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-01")), 
+                  ylim = c(-30, 30)) +
+  theme_minimal(base_size = 16) +
+  #theme(legend.position = "none")+
+  labs(
+    #title = "Comparison of growth chamber settings vs. 30 year average temp on QHI",
+    #subtitle = "Ribbons show min/max range; lines show mean temperature.",
+    x = "Month",
+    y = "Temperature (°C)",
+    color = "Data")
 
 
 ###############################################################################
@@ -177,7 +174,8 @@ ggplot(light_plot_data, aes(x = dummydate, y = decimal_hrs)) +
                                "Growth Chamber Settings" = "transparent")) +
   scale_color_manual(values = c("QHI Photoperiod" = "transparent", 
                                 "Growth Chamber Settings" = "orange")) +
-    labs(title = "Comparing Growth Chamber Settings to QHI Photoperiod",
+    labs(
+      title = "Comparing Growth Chamber Settings to QHI Photoperiod",
        x = "Month", y = "Daylight Hours",
        fill = "Data Source", color = "Data Source") + 
   scale_x_date(date_labels = "%b", date_breaks = "1 month") +
@@ -213,10 +211,12 @@ ggplot(qhi_combined, aes(x = dummydate)) +
   ) +
   scale_color_manual(values = c("Temperature" = "black", "Daylight Hours" = "gold")) +
   scale_x_date(date_labels = "%b", date_breaks = "1 month") +
-  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-25")), ylim = c(-30, 30)) +
+  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-01")), ylim = c(-30, 30)) +
   theme_minimal() +
-  labs(title = "ECCC Temperature vs. QHI Photoperiod",
-       subtitle = "Light scale adjusted so that 0 to 24hrs = -30 to 30°C",
+  labs(
+       #title = "ECCC Temperature vs. QHI Photoperiod",
+       x = "Month",
+       #subtitle = "Light scale adjusted so that 0 to 24hrs = -30 to 30°C",
        color = "Data")
 
 #### With shading
@@ -227,9 +227,11 @@ ggplot(qhi_combined, aes(x = dummydate)) +
   # Dark Blue above the light boundary
   geom_ribbon(aes(ymin = (decimal_hrs * 2.5) - 30, ymax = 30), 
               fill = "midnightblue", alpha = 0.4) +
+  geom_line(aes(y = (decimal_hrs * 2.5) - 30, color = "Daylight Hours"), 
+            linewidth = 1, linetype = "solid") +
     # Plot temp data
-  geom_ribbon(aes(ymin = eccc_min_temp, ymax = eccc_max_temp), fill = "gray80", alpha=0.8) +
-  geom_line(aes(y = eccc_mean_temp), color = "black", linewidth = 1) +
+  geom_ribbon(aes(ymin = eccc_min_temp, ymax = eccc_max_temp), fill = "grey", alpha = 0.2) +
+  geom_line(aes(y = eccc_mean_temp, color = "30yr Avg Temp"), linewidth = 1) +
   # Reference line at 0°C
   geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
   # scaling both axes
@@ -239,11 +241,16 @@ ggplot(qhi_combined, aes(x = dummydate)) +
     sec.axis = sec_axis(~ (. + 30) / 2.5, name = "Daylight Hours", breaks = seq(0, 24, 4))
   ) +
   scale_x_date(date_labels = "%b", date_breaks = "1 month") +
-  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-25")), 
+  scale_color_manual(values = c("30yr Avg Temp" = "black", "Daylight Hours" = "gold")) +
+  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-01")), 
                   ylim = c(-30, 30)) +
-  theme_minimal() +
-  labs(title = "ECCC 30 year average temperature on QHI compared to daylight hours",
-       subtitle = "Yellow = daylight and civil twilight | blue = night and all other twilight")
+  theme_minimal(base_size = 16) +
+  theme(legend.position = "none")+
+  labs(
+      # title = "Qikiqtaruk 30yr average temperature and photoperiod",
+       x = "Month",
+       #subtitle = "Yellow = daylight and civil twilight | blue = night and all other twilight"
+       color = "Data")
 
 
 ###############################################################
@@ -336,42 +343,76 @@ combined_plot_data <- forplot %>%
 
 # Create dual axis plot with temperature on one side and light on the other
 ggplot(combined_plot_data, aes(x = dummydate)) +
-  # Field light conditions
-  geom_ribbon(data = filter(plot_df, gc_id == "extended"),
-              aes(ymin = QHI_hrs * 1.25, ymax = 30, fill = "night"), 
-              alpha = 0.4) +
   # Temp ribbons and lines
   geom_ribbon(aes(ymin = min, ymax = max, fill = Group), alpha = 0.2) +
   geom_line(aes(y = mean, color = Group), linewidth = 1) +
   # GC light lines
-  geom_line(aes(y = `Growth Chamber_hrs` * 1.25, color = "GC Light"), 
+  geom_line(aes(y = (`Growth Chamber_hrs` * 2.5) - 30, color = "GC Dayight hours"), 
             linewidth = 0.8, linetype = "solid") +
   # Reference line at 0°C
   geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
   # Define the Scales
   scale_y_continuous(
     name = "Temperature (°C)",
-    sec.axis = sec_axis(~ . / 1.25, name = "Daylight Hours", breaks = seq(0, 24, 4))
+    limits = c(-40, 30),
+    sec.axis = sec_axis(~ (. + 30) / 2.5, name = "Daylight Hours", breaks = seq(0, 24, 4))
   ) +
   # Formatting
   scale_color_manual(
     name = "Legend",
-    breaks = c("control", "heatwave", "extended", "QHI Light", "GC Light"),
+    breaks = c("control", "heatwave", "extended", "QHI Light", "GC Dayight hours"),
     values = c("control" = "blue", "heatwave" = "red", "extended" = "orange",
-               "QHI Light" = "black", "GC Light" = "gold")
+                "GC Dayight hours" = "gold")
   ) +
   scale_fill_manual(
     name = "Legend",
     breaks = c("control", "heatwave", "extended", "day", "night"),
-    values = c("control" = "blue", "heatwave" = "red", "extended" = "orange", 
-               "day" = "gold", "night" = "midnightblue")
+    values = c("control" = "blue", "heatwave" = "red", "extended" = "orange")
   ) +
-  coord_cartesian(xlim = c(as.Date("2023-05-10"), as.Date("2023-10-05")), 
-                  ylim = c(-10, 35)) +
-  theme_minimal() +
-  labs(title = "Comparing all GC settings to field light and temp conditions on QHI",
+  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-01")), 
+                  ylim = c(-30, 30)) +
+  theme_minimal(base_size = 16) +
+  theme(legend.position = "none")+
+  labs(
+       #title = "Comparing all GC settings to field light and temp conditions on QHI",
        x = "Month")
 
+filtered_data <- combined_plot_data %>%
+  filter(Source == "Growth Chamber Settings")
 
-
+# Create dual axis plot with temperature on one side and light on the other
+ggplot(filtered_data, aes(x = dummydate)) +
+  # Temp ribbons and lines
+  geom_ribbon(aes(ymin = min, ymax = max, fill = Group), alpha = 0.2) +
+  geom_line(aes(y = mean, color = Group), linewidth = 1) +
+  # GC light lines
+  geom_line(aes(y = (`Growth Chamber_hrs` * 2.5) - 30, color = "GC Dayight hours"), 
+            linewidth = 0.8, linetype = "solid") +
+  # Reference line at 0°C
+  geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
+  # Define the Scales
+  scale_y_continuous(
+    name = "Temperature (°C)",
+    limits = c(-40, 30),
+    sec.axis = sec_axis(~ (. + 30) / 2.5, name = "Daylight Hours", breaks = seq(0, 24, 4))
+  ) +
+  # Formatting
+  scale_color_manual(
+    name = "Legend",
+    breaks = c("control", "heatwave", "extended", "QHI Light", "GC Dayight hours"),
+    values = c("control" = "blue", "heatwave" = "red", "extended" = "orange",
+               "GC Dayight hours" = "gold")
+  ) +
+  scale_fill_manual(
+    name = "Legend",
+    breaks = c("control", "heatwave", "extended", "day", "night"),
+    values = c("control" = "blue", "heatwave" = "red", "extended" = "orange")
+  ) +
+  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-01")), 
+                  ylim = c(-30, 30)) +
+  theme_minimal(base_size = 16) +
+  theme(legend.position = "none")+
+  labs(
+    #title = "Comparing all GC settings to field light and temp conditions on QHI",
+    x = "Month")
 
