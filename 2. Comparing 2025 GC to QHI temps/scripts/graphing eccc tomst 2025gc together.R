@@ -1,8 +1,8 @@
 ######################################################
-########## Comparing 2025 Growth Chamber     #########
-##########    temps to TOMST to ECCC Data    #########
-##########    By Bailey Bingham             ##########
-##########    Feb 19th, 2026                ##########
+########## Comparing 2025 Growth Chamber      #########
+##########    Settings to TOMST to ECCC Data  #########
+##########    By Bailey Bingham               #########
+##########    Feb 19th, 2026                 ##########
 ######################################################
 
 library(tidyverse) #includes ggplot, tidyr, dplyr, etc. 
@@ -116,16 +116,15 @@ ggplot(forplot, aes(x = dummydate, fill = Source, color = Source)) +
   geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.2, color = NA) +
   geom_line(aes(y = mean), linewidth = 1) +
   geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
-  scale_x_date(date_labels = "%b", date_breaks = "1 month") +
   labs(title = "Temperature Comparison",
-       subtitle = "Comparing our 2025 growth chamber settings to the last 4 years of TOMST data
+       subtitle = "Comparison for 2025 growth chamber settings to the last 4 years of TOMST data
 and all the ECCC data available from QHI over the last 30 years.",
        x = "Month",
        y = "Temperature (°C)",
        fill = "Dataset",
        color = "Dataset") +
-  coord_cartesian(xlim = c(as.Date("2023-05-20"), as.Date("2023-10-15"))) +
-  scale_x_date(date_labels = "%b %d", date_breaks = "1 week") +
+  coord_cartesian(xlim = c(as.Date("2023-05-18"), as.Date("2023-10-15")), ylim = c(-25, 40)) +
+  scale_x_date(date_labels = "%b%d", date_breaks = "5 days") +
   theme_minimal()
 
 
