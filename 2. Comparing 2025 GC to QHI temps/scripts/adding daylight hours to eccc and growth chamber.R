@@ -202,29 +202,34 @@ qhi_combined <- eccc %>%
 
 #plot field light and temp data on the same graph
 ggplot(qhi_combined, aes(x = dummydate)) +
-  # QHI photoperiod (y-axis scaled and shifted so 0 to 24 matches -30 to 30)
-  geom_line(aes(y = (decimal_hrs * 2.5) - 30, color = "Daylight Hours"), 
+  # QHI photoperiod: scaled and shifted so 0 to 24 hrs maps to -20 to 20
+  geom_line(aes(y = (decimal_hrs * (40 / 24)) - 20, color = "Daylight Hours"), 
             linewidth = 1, linetype = "solid") +
-  # ECCC Temperature 
+  # ECCC Temperature Ribbon (Min/Max range)
   geom_ribbon(aes(ymin = eccc_min_temp, ymax = eccc_max_temp), fill = "grey", alpha = 0.2) +
+  # ECCC Mean Temperature Line
   geom_line(aes(y = eccc_mean_temp, color = "Temperature"), linewidth = 1) +
+  # Freezing threshold indicator
   geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
-     # Axis Configuration
+  # Axis Configuration
   scale_y_continuous(
     name = "Temperature (°C)",
-    limits = c(-40, 30),
-    # Reverse the transformation for labels: (y + 30) / 2.5
-    sec.axis = sec_axis(~ (. + 30) / 2.5, name = "Daylight Hours", breaks = seq(0, 24, 4))
+    breaks = seq(-20, 20, by = 5), 
+    # Reverses the transformation in geom_line so that the labels are right
+    sec.axis = sec_axis(~ (. + 20) / (40 / 24), name = "Daylight Hours", breaks = seq(0, 24, 4))
   ) +
   scale_color_manual(values = c("Temperature" = "black", "Daylight Hours" = "gold")) +
-  scale_x_date(date_labels = "%b", date_breaks = "1 month") +
-  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-01")), ylim = c(-30, 30)) +
+  scale_x_date(
+    breaks = seq(from = as.Date("2023-05-06"), to = as.Date("2023-10-26"), by = "4 days"),
+    date_labels = "%b %d") +
+  coord_cartesian(xlim = c(as.Date("2023-05-06"), as.Date("2023-10-25")), ylim = c(-21, 21),expand = FALSE ) +
   theme_minimal() +
+  # Rotates the X-axis labels to 90 degrees and aligns them cleanly
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + 
   labs(
-       #title = "ECCC Temperature vs. QHI Photoperiod",
-       x = "Month",
-       #subtitle = "Light scale adjusted so that 0 to 24hrs = -30 to 30°C",
-       color = "Data")
+    x = "Date",
+    color = "Data")
+
 
 #### With shading
 ggplot(qhi_combined, aes(x = dummydate)) +
@@ -249,7 +254,7 @@ ggplot(qhi_combined, aes(x = dummydate)) +
   ) +
   scale_x_date(date_labels = "%b%d", date_breaks = "1 week") +
   scale_color_manual(values = c("30yr Avg Temp" = "black", "Daylight Hours" = "gold")) +
-  coord_cartesian(xlim = c(as.Date("2023-05-20"), as.Date("2023-10-01")), 
+  coord_cartesian(xlim = c(as.Date("2023-05-20"), as.Date("2023-10-20")), 
                   ylim = c(-20, 30)) +
   theme_minimal(base_size = 11) +
   theme(legend.position = "none")+
