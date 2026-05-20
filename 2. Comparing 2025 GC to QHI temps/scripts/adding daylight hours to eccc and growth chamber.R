@@ -228,7 +228,8 @@ ggplot(qhi_combined, aes(x = dummydate)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + 
   labs(
     x = "Date",
-    color = "Data")
+    color = "Data", 
+    subtitle = "Based on average of 30 years of data from the QHI ECCC weather station.")
 
 
 #### With shading
