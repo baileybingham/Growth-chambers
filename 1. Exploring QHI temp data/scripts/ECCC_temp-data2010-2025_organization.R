@@ -9,7 +9,7 @@
 library(tidyverse) #includes ggplot, tdyr, dplyr, etc. 
 
 ####Import and join climate data####
-data_path <- "Calculating growth chamber parameters/data/QHI temperature data/ECCC temp data/"
+data_path <- "1. Exploring QHI temp data/data/ECCC temp data/raw/"
 desired_cols <- c(
   "Station.Name", "Date.Time", "Year", "Month", "Day",
   "Max.Temp...C.", "Min.Temp...C.", "Mean.Temp...C.") #define columns I want to keep
@@ -36,11 +36,12 @@ ggplot(climALL, aes(x = Date.Time, y = Mean.Temp...C.)) +
   geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
   facet_wrap(~Year, scales = "free_x")+
   theme_minimal() +
-  scale_y_continuous(breaks = seq(-50, 50, by = 5)) + 
-  scale_x_date(date_labels = "%b %d", date_breaks = "1 months") + 
+  scale_y_continuous(breaks = seq(-40, 40, by = 10)) + 
+  scale_x_date(date_labels = "%b", date_breaks = "1 month") + 
+  theme(axis.text.x = element_text(angle = 90))+
   labs(
     title = "Daily Mean Temperature (1996-2025)",
-    x = "Month and Day",
+    x = "Month",
     y = "Mean Temperature (°C)"
   )
 

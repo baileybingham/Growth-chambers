@@ -104,7 +104,7 @@ rollavg %>%
   ggplot(aes(x = datetime, y = Temp, color = Method)) +
   geom_line(size = 1) +
   geom_point() +
-  labs(title = "Bead Pattern Comparison: Avg vs Max",
+  labs(title = "Rolling averages",
        subtitle = "Rolling Max preserves heatwave peaks for better visualization",
        y = "Degrees (C)") +
   theme_minimal()
