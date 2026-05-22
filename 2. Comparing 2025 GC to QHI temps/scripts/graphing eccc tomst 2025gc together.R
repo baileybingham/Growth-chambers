@@ -116,16 +116,18 @@ ggplot(forplot, aes(x = dummydate, fill = Source, color = Source)) +
   geom_ribbon(aes(ymin = min, ymax = max), alpha = 0.2, color = NA) +
   geom_line(aes(y = mean), linewidth = 1) +
   geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
-  labs(title = "Temperature Comparison",
-       subtitle = "Comparison for 2025 growth chamber settings to the last 4 years of TOMST data
-and all the ECCC data available from QHI over the last 30 years.",
-       x = "Month",
+  labs(x = "Month",
        y = "Temperature (°C)",
        fill = "Dataset",
        color = "Dataset") +
-  coord_cartesian(xlim = c(as.Date("2023-05-18"), as.Date("2023-10-15")), ylim = c(-25, 40)) +
-  scale_x_date(date_labels = "%b%d", date_breaks = "5 days") +
-  theme_minimal()
+  coord_cartesian(xlim = c(as.Date("2023-05-01"), as.Date("2023-10-15")), ylim = c(-25, 40)) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90))+
+  scale_x_date(
+    date_labels = "%b %d", 
+    date_breaks = "5 days",
+    expand = c(0, 0)
+  )
 
 
 ####################################################################

@@ -98,28 +98,23 @@ ggplot(forplot, aes(x = dummydate, fill = Group, color = Group)) +
     # Reference line at 0°C
   geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
     # Date formatting
-  scale_x_date(date_labels = "%b", date_breaks = "1 month") +
-    # Custom Colors (optional but recommended for clarity)
+  scale_x_date(date_labels = "%b %d", date_breaks = "5 days") +
   scale_color_manual(values = c("control" = "blue", "heatwave" = "red", 
                                 "extended" = "orange", "ECCC-QHI 30yr avg" = "black")) +
   scale_fill_manual(values = c("control" = "blue", "heatwave" = "red", 
                                "extended" = "orange", "ECCC-QHI 30yr avg" = "black")) +
-  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-01")), 
-                  ylim = c(-30, 30)) +
-  theme_minimal(base_size = 16) +
-  #theme(legend.position = "none")+
- labs(
-   # title = "Comparison of growth chamber settings vs. 30 year average temp on Qikiqtaruk",
-   #    subtitle = "Ribbons show min/max range. Lines show mean temperature.
-#Note that daylight hours began to decrease from 24hrs of daylight on August 17th, in line with light conditions in the field.",
+  theme_minimal() +
+  coord_cartesian(ylim = c(-25, 30)) +
+  scale_x_date(
+    date_labels = "%b %d", 
+    date_breaks = "4 days",
+    expand = c(0, 0),
+    limits = c(as.Date("2023-05-04"), as.Date("2023-10-15")))+
+  theme(axis.text.x = element_text(angle = 90))+
+    labs(
        x = "Month/ Simulated date",
-       y = "Temperature (°C)")+
-       #fill = "Growth Chamber Setting",
-      # color = "Growth Chamber Setting") 
-    # Focus on the active period (zoom without removing data)
-  coord_cartesian(xlim = c(as.Date("2023-05-05"), as.Date("2023-10-25")),
-                  ylim = c(-30, 30)) + 
-  theme_minimal()
+       y = "Temperature (°C)")
+  
 
 
 
