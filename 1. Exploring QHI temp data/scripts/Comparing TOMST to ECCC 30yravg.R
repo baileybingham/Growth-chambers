@@ -98,16 +98,21 @@ rollavg <-tomst_daily_avg %>%
     # Rolling Min: Captures the coolest dip of the week
     rolling_min = rollapply(QHI_min, width = 6, FUN = min, fill = NA, align = "center"))
 
-rollavg %>%
-  pivot_longer(cols = c(rolling_avg, rolling_max, rolling_min), 
-               names_to = "Method", values_to = "Temp") %>%
-  ggplot(aes(x = datetime, y = Temp, color = Method)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(title = "Rolling averages",
-       subtitle = "Rolling Max preserves heatwave peaks for better visualization",
+
+ggplot(rollavg, aes(x = datetime, y = rolling_avg)) +
+  geom_ribbon(aes(ymin = QHI_min, ymax = QHI_max), alpha = 0.2, fill = "darkred") +
+  geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
+  geom_line(color = "darkred", size = 0.8) +
+  labs(title = "QHI 2023 Rolling Avg",
+       subtitle = "Visualizing the 2023 heatwave",
        y = "Degrees (C)") +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90))+
+  coord_cartesian(ylim = c(-15, 35),  xlim = c(as.Date("2023-05-01"), as.Date("2023-10-30")))+
+  scale_x_date(
+    date_labels = "%b %d", 
+    date_breaks = "4 days",
+    expand = c(0, 0))
 
 #### Combine TOMST with ECCC to compare 2023 to the 30 year average
 cdata<-cbind(eccc, rollavg)
@@ -115,20 +120,26 @@ cdata<-cbind(eccc, rollavg)
 # graph it
 ggplot(cdata, aes(x = dummydate)) +
   geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
-  #ECCC Ribbon (Grey Background)
-  geom_ribbon(aes(ymin = eccc_min_temp, ymax = eccc_max_temp),fill = "grey", alpha = 0.3) +
   #ECCC Mean Line
   geom_line(aes(y = eccc_mean_temp), color = "grey20", size = 0.8) +
+  #ECCC Ribbon (Grey Background)
+  geom_ribbon(aes(ymin = eccc_min_temp, ymax = eccc_max_temp),fill = "grey", alpha = 0.3) +
   #QHI Ribbon 
   geom_ribbon(aes(ymin = QHI_min, ymax = QHI_max), fill = "darkred", alpha = 0.3) +
   #QHI Mean Line
-  geom_line(aes(y = QHI_mean), color = "darkred", size = 1) +
+  geom_line(aes(y = rolling_avg), color = "darkred", size = 1) +
   scale_x_date(date_labels = "%b %d", date_breaks = "1 month") +
-  labs(title = "QHI ECCC weather station historical temps compared to 2023 TOMST average, max and min temps",
-       subtitle = "Grey: ECCC (30-yr) | Red: QHI TOMST (2023)",
+  labs(title = "Visualizing the 2023 heat wave",
+       subtitle = "Black: ECCC (30-yr) | Red: QHI TOMST (2023)",
        x = "Date",
        y = "Temperature (°C)") +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90))+
+  coord_cartesian(ylim = c(-15, 35),  xlim = c(as.Date("2023-05-01"), as.Date("2023-10-10")))+
+  scale_x_date(
+    date_labels = "%b %d", 
+    date_breaks = "4 days",
+    expand = c(0, 0))
 
 
 # what about with rolling 2023 averages?

@@ -149,7 +149,7 @@ ggplot(tomstavg, aes(x = dummydate)) +
 rollavg <-tomstavg %>%
   mutate(
     # Rolling Average: Smoothes data, but lowers peaks
-    rolling_avg = rollmean(qhi_mean, k = 3, fill = NA, align = "center"))
+    rolling_avg = rollmean(qhi_mean, k = 6, fill = NA, align = "center"))
 
 ggplot(rollavg, aes(x = dummydate, y = rolling_avg)) +
   geom_line(size = 0.5) + 
@@ -207,7 +207,6 @@ eccc_rev <-eccc %>%
 
 ggplot(eccc_rev, aes(x = dummydate, y = qhi_mean)) +
   geom_point(alpha = 0.1, color = "black", size = 1)+
-  #geom_smooth(aes(group = Year, color = Year),  se = FALSE, linewidth = 0.7) + #show individual years
   geom_smooth(color = "blue", linewidth = 1.5, se = FALSE) + #show trendline
   geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
   scale_y_continuous(breaks = seq(-50, 50, by = 5)) + 
@@ -328,3 +327,24 @@ ggplot(ddata, aes(x = dummydate)) +
        x = "Date",
        y = "Temperature (°C)") +
   theme_minimal()
+
+# what about with rolling 2023 averages over just the growing season
+ggplot(ddata, aes(x = dummydate)) +
+  geom_hline(yintercept = 0, color = "red", linewidth = 0.5, linetype = "dashed") +
+  #ECCC Mean Line
+  geom_line(aes(y = eccc_qhi_mean), color = "blue", size = 0.8) +
+  #TOMST Ribbon 
+  geom_ribbon(aes(ymin = qhi_min, ymax = qhi_max), fill = "darkred", alpha = 0.2) +
+  #TOMST rolling average Line
+  geom_line(aes(y = rolling_avg), color = "darkred", size = 0.8) +
+  scale_x_date(date_labels = "%b %d", date_breaks = "1 month") +
+  labs(title = "QHI ECCC weather station historical temps compared to TOMST rolling average and max and min temps",
+       subtitle = "Grey: ECCC (30-yr) | Red: rolling average and actual max and mins of the TOMST (2022-2025)",
+       x = "Date",
+       y = "Temperature (°C)") +
+  theme_minimal()+
+  coord_cartesian(ylim = c(-15, 35),  xlim = c(as.Date("2026-05-15"), as.Date("2026-10-10")))
+
+
+
+
